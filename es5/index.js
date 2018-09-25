@@ -21,6 +21,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var fs = require('fs');
 var format = require('util').format;
 var EventEmitter = require('events').EventEmitter;
+var moment = require('moment');
 
 var isElectronRenderer = process.type && process.type === 'renderer';
 var isNodejs = !isElectronRenderer && process.version ? true : false;
@@ -219,7 +220,7 @@ var Logger = function () {
 
       var result = '';
 
-      if (this.options.showTimestamp && !this.options.useLocalTime) result += '' + new Date().toISOString() + ' ';
+      if (this.options.showTimestamp && !this.options.useLocalTime) result += '' + moment().format('HH:mm:ss.SSS') + ' ';
 
       if (this.options.showTimestamp && this.options.useLocalTime) result += '' + new Date().toLocaleString() + ' ';
 
