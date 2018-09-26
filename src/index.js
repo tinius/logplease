@@ -108,6 +108,7 @@ class Logger {
   _write(level, text) {
     if((this.options.filename || GlobalLogfile) && !this.fileWriter && isNodejs)
       this.fileWriter = fs.openSync(this.options.filename || GlobalLogfile, this.options.appendFile ? 'a+' : 'w+');
+      this.errorFileWriter = fs.openSync(this.options.errorfilename || GlobalLogfile, this.options.appendFile ? 'a+' : 'w+');
 
     let format = this._format(level, text);
     let unformattedText = this._createLogMessage(level, text);
@@ -115,6 +116,10 @@ class Logger {
 
     if(this.fileWriter && isNodejs)
       fs.writeSync(this.fileWriter, unformattedText + '\n', null, 'utf-8');
+
+      if( this.errorFileWriter && level === LogLevels.ERROR ) {
+        fs.writeSync(this.errorFileWriter, unformattedText + '\n', null, 'utf-8');
+      }
 
     if(isNodejs || !this.options.useColors) {
       console.log(formattedText)

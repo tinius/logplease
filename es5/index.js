@@ -129,12 +129,17 @@ var Logger = function () {
     key: '_write',
     value: function _write(level, text) {
       if ((this.options.filename || GlobalLogfile) && !this.fileWriter && isNodejs) this.fileWriter = fs.openSync(this.options.filename || GlobalLogfile, this.options.appendFile ? 'a+' : 'w+');
+      this.errorFileWriter = fs.openSync(this.options.errorfilename || GlobalLogfile, this.options.appendFile ? 'a+' : 'w+');
 
       var format = this._format(level, text);
       var unformattedText = this._createLogMessage(level, text);
       var formattedText = this._createLogMessage(level, text, format.timestamp, format.level, format.category, format.text);
 
       if (this.fileWriter && isNodejs) fs.writeSync(this.fileWriter, unformattedText + '\n', null, 'utf-8');
+
+      if (this.errorFileWriter && level === LogLevels.ERROR) {
+        fs.writeSync(this.errorFileWriter, unformattedText + '\n', null, 'utf-8');
+      }
 
       if (isNodejs || !this.options.useColors) {
         console.log(formattedText);
